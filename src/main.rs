@@ -1,3 +1,8 @@
+extern crate tui;
+use tui::{Terminal, terminal};
+use tui::backend::CrosstermBackend;
+use tui::widgets::{Widget, Block, Borders};
+use tui::layout::{Layout, Constraint, Direction};
 use std::fs;
 enum Priority {
     Low, Medium, High
@@ -26,4 +31,12 @@ pub mod TaskHandling{
 
     }
 
+}
+
+fn main() {
+    // Create a TUI backend for the Terminal
+    let backend = CrosstermBackend::new(io::stdout());
+
+    // Create a TUI terminal using the backend
+    let mut terminal = terminal::new(backend).unwrap();
 }
