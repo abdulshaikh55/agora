@@ -1,22 +1,30 @@
-use std::io::Write; // used by .flush() in add_task function
+use std::io::{self, Write, Read}; // Write used by .flush() in add_task function
+use std::fs::File;
+use serde_json;
+use serde_derive::{Serialize, Deserialize};
 // let's start with creating a struct Task that holds the task and its additional information
 
-// An enum that describes the status of a task
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 enum Status { 
     NotStarted, Ongoing, Completed // Just like my to-do list: never started, always ongoing, never completed!
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+enum Priority {
+    Urgent, Important, Normal
+}
 
+#[derive(Debug, Serialize, Deserialize)]
 // A struct that holds information about individual tasks
-
 struct Task {
     title: String,
     description: String,
     due_date: String,
-    status: Status
+    status: Status,
+    priority: Priority
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 // A struct that holds the vector of tasks
 struct TaskManager {
     tasks: Vec<Task>
@@ -25,11 +33,12 @@ struct TaskManager {
 // an implementation that helps us in interacting with all the tasks
 impl TaskManager {
 
-    // This function adds new Task in the vector. returns Some(()) if successful
+    // This function adds new Task in the vector
     fn add_new_task(&mut self) {
         let mut title = String::new();
         let mut description = String::new();
         let mut due_date = String::new();
+        let mut priority = String::new();
 
         print!("Enter task title: ");
         std::io::stdout().flush().unwrap();
@@ -40,6 +49,17 @@ impl TaskManager {
         std::io::stdout().flush().unwrap();
         std::io::stdin().read_line(&mut description).expect("Failed to read input");
         let description: String = description.trim().parse().expect("Enter a valid description");
+
+        println!("Choose task priority: ");
+        println!("u - Urgent\ni - Important\nn - Normal");
+        std::io::stdin().read_line(&mut priority).expect("Faild to read input");
+        let priority: char = priority.trim().parse().expect("Enter a valid choice");
+        let prior = match priority {
+            'u' => Priority::Urgent,
+            'i' => Priority::Important,
+            'n' => Priority::Normal,
+            _ => panic!("Invalid choice"),
+        };
 
         print!("Enter task due date(DD/MM/YY): ");
         std::io::stdout().flush().unwrap();
@@ -52,6 +72,7 @@ impl TaskManager {
             description,
             due_date,
             status: Status::NotStarted,
+            priority: prior,
         };
 
         self.tasks.push(new_task);
@@ -62,7 +83,8 @@ impl TaskManager {
     fn display_all(&self) {
         for (idx, task) in self.tasks.iter().enumerate() {
             println!("\n**************************************************");
-            println!("{} -> {}", idx, task.title);
+            println!("Priority: {:?}", task.priority);
+            println!("{} -> {}", idx + 1, task.title);
             println!("Description: {}", task.description);
             println!("Due Date: {}", task.due_date);
             println!("Status: {:?}", task.status);
@@ -71,7 +93,6 @@ impl TaskManager {
     }
 
     fn update_task(&mut self) {
-
         loop {
             // first display all the tasks
             self.display_all();
@@ -87,15 +108,19 @@ impl TaskManager {
                 println!("The task at that index does not exist. Try again.");
                 continue;
             }
+            if choice == 0 {
+                break;
+            }
 
-            match self.tasks.get_mut(choice) {
+            match self.tasks.get_mut(choice - 1) {
                 Some(task) => {
                     println!("What do you want to modify?");
-                    println!("1. Description");
-                    println!("2. Title");
-                    println!("3. Due Date");
-                    println!("4. Status");
-                    print!("5. Exit\n=> ");
+                    println!("1. Title");
+                    println!("2. Description");
+                    println!("3. Priority");
+                    println!("4. Due Date");
+                    println!("5. Status");
+                    print!("6. Exit\n=> ");
                     std::io::stdout().flush().unwrap();
                     let mut modify_choice = String::new();
                     std::io::stdin().read_line(&mut modify_choice).expect("Failed to read input");
@@ -103,31 +128,44 @@ impl TaskManager {
 
                     match modify_choice {
                         1 => {
-                            let mut description = String::new();
-                            print!("Enter new description: ");
-                            std::io::stdout().flush().unwrap();
-                            std::io::stdin().read_line(&mut description).expect("Failed to read input");
-                            task.description = description.trim().to_string();
-                        },
-                        2 => {
                             let mut title = String::new();
                             print!("Enter new title: ");
                             std::io::stdout().flush().unwrap();
-                            std::io::stdin().read_line(&mut title).expect("Failed to read input");
+                            std::io::stdin().read_line(&mut title).expect("Failed to read the title");
                             task.title = title.trim().to_string();
                         },
+                        2 => {
+                            let mut description = String::new();
+                            print!("Enter new description: ");
+                            std::io::stdout().flush().unwrap();
+                            std::io::stdin().read_line(&mut description).expect("Failed to read description");
+                            task.description = description.trim().to_string();
+                        },
                         3 => {
+                            let mut priority = String::new();
+                            println!("Enter new status:\n'u'- Urgent\n'i' - Important\n'n' - Normal");
+                            std::io::stdin().read_line(&mut priority).expect("failed to read priority");
+                            let priority: char = priority.trim().parse().expect("Enter a valid choice");
+                            let prior = match priority {
+                                'u' => Priority::Urgent,
+                                'i' => Priority::Important,
+                                'n' => Priority::Normal,
+                                _ => panic!("Invalid choice"),
+                            };
+                            task.priority = prior;
+                        },
+                        4 => {
                             let mut due_date = String::new();
                             print!("Enter new due date(DD/MM/YY): ");
                             std::io::stdout().flush().unwrap();
-                            std::io::stdin().read_line(&mut due_date).expect("Failed to read input");
+                            std::io::stdin().read_line(&mut due_date).expect("Failed to read due_date");
                             task.due_date = due_date.trim().to_string();
                         },
-                        4 => {
+                        5 => {
                             let mut status = String::new();
                             print!("Enter new status: \n1. Not started\n2. Ongoing\n3. Completed\n => ");
                             std::io::stdout().flush().unwrap();
-                            std::io::stdin().read_line(&mut status).expect("Failed to read input");
+                            std::io::stdin().read_line(&mut status).expect("Failed to read status");
                             let status = match status.trim().parse() {
                                 Ok(1) => Status::NotStarted,
                                 Ok(2) => Status::Ongoing,
@@ -139,7 +177,7 @@ impl TaskManager {
                             };
                             task.status = status;
                         },
-                        5 => break, // Exit the loop 
+                        6 => break, // Exit the loop 
                         _ => {
                             println!("Invalid choice"); // if user does not choose the valid option
                             continue;
@@ -186,11 +224,34 @@ impl TaskManager {
         }
         None
     }
+
+    fn save_to_file(&self, filename: &str) -> io::Result<()> {
+        // #1 put the tasks in 'data' variable in serialized form using serde::json.
+        let data = serde_json::to_string(&self)?;
+        // #2 create a file and name it 'filename'. don't worry if the file is already there; it will just open the file with that name
+        let mut file = File::create(filename)?;
+        // #3 insert all the data into the file.
+        file.write_all(data.as_bytes())?;
+        Ok(())
+    }
+
+    fn load_from_file(filename: &str) -> io::Result<TaskManager> {
+        // #1 open the file you want to access and put it on file.
+        let mut file = File::open(filename)?;
+        // #2 initialize a variable to hold the content of that file.
+        let mut file_content = String::new();
+        // #3 insert the content into the variable.
+        file.read_to_string(&mut file_content)?;
+
+        // #4 deserialize the content and return it
+        let tasks: TaskManager = serde_json::from_str(&file_content)?;
+        Ok(tasks)
+    }
 }
 
 fn main() {
     // a vector type DS that will hold all the tasks.
-    let mut tasks: TaskManager = TaskManager { tasks: Vec::new() };
+    let mut tasks: TaskManager = TaskManager::load_from_file("tasks.json").unwrap_or_else(|_| TaskManager { tasks: Vec::new() });
 
     println!("Hello User! How can I help you?");
     loop {
@@ -201,12 +262,19 @@ fn main() {
         let choice: u8 = choice.trim().parse().expect("Enter a valid input");
 
         match choice {
-            1 => tasks.add_new_task(),
-            2 => tasks.update_task(),
+            1 => {
+                tasks.add_new_task();
+                tasks.save_to_file("tasks.json").expect("failed to save new task.");
+            },
+            2 => {
+                tasks.update_task();
+                tasks.save_to_file("tasks.json").expect("Failed to save update task.");
+            },
             3 => {
                 if let Some(task) = tasks.delete() {
                     // Use the deleted task here
                     println!("Deleted task: {}\nDescription: {}", task.title, task.description);
+                    tasks.save_to_file("tasks.json").expect("Failed to save delete task.");
                 } else {
                     println!("No task deleted.");
                 }
