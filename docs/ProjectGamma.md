@@ -20,4 +20,7 @@ This stage has some significant changes from the previous stages, but the code i
 * Integration with a calendar system for task scheduling and reminders.
 * Continuous improvement of the user interface and user experience based on user feedback.
 * ...
+<br><br><br>
+
+<a href="https://www.linkedin.com/in/abdulshaikh55"><img src ="./images/linkedin.png" alt = "LinkedIn" height="30px" width="30px"></a>
 

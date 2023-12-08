@@ -27,5 +27,6 @@ There are also absence of some functionalities and drawbacks which will be cover
 * ...
 
 Hopefully we will cover the drawbacks and add the much needed funtionalites so that we can complete the project in the earliest letters as possible.
+<br><br><br>
 
-![Abdul Shaikh](https://www.linkedin.com/in/abdulshaikh55/)
+<a href="https://www.linkedin.com/in/abdulshaikh55"><img src ="./images/linkedin.png" alt = "LinkedIn" height="30px" width="30px"></a>

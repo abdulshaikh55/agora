@@ -4,7 +4,7 @@
 There have been two significant changes in the Delta phase. They are not much because I had to learn File I/O in Rust from scratch.
 1. A new struct called Priority has been added to help users prioritize and sequentialize their tasks. The output depending on priority will be added in the next phase.
    
-2. File I/O: Now we can save the tasks locally and access them whenever we want. When you add a task, it automatically updates the task in the file you specified. Updating a task in the terminal will also update the task in the file. Deleting task(s) will automatically delete tasks in the file. The [tasks.json](..\tasks.json) file is created usin File I/O.
+2. File I/O: Now we can save the tasks locally and access them whenever we want. When you add a task, it automatically updates the task in the file you specified. Updating a task in the terminal will also update the task in the file. Deleting task(s) will automatically delete tasks in the file. The [tasks.json](..\tasks.json) file is created using File I/O.
 
 
 Expected updates:
@@ -16,4 +16,7 @@ Expected updates:
 
 
 ## Today I learned
-Today I learned about a Text-based User Interface called [ratatui](https://ratatui.rs/index.html) (I know). I even wrote a hello world program on it, as is tradition. I will be learning about ratatui and TUI and see which one is better to implement into this code. Hopefully, our program gets completed before the Greek letters run out.
+Today I learned about a Text-based User Interface called [ratatui](https://ratatui.rs/index.html) (I know). I even wrote a hello world program on it, as is tradition. I will be learning more about ratatui and TUI to see which one is better to implement into this code. Hopefully, our program gets completed before we run out of Greek letters.
+<br><br><br>
+
+<a href="https://www.linkedin.com/in/abdulshaikh55"><img src ="./images/linkedin.png" alt = "LinkedIn" height="30px" width="30px"></a>
