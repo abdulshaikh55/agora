@@ -11,6 +11,7 @@ We have organized the documentation to make it easy for you to navigate and find
 3. [Stage Gamma](ProjectGamma.md)
 4. [Stage Delta](ProjectDelta.md)
 5. [Stage Epsilon](ProjectEpsilon.md)
+6. [Stage Zeta](ProjectZeta.md)
 
 We hope you find this documentation helpful and informative. Happy exploring!
 

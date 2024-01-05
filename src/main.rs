@@ -5,7 +5,6 @@ use colored::Colorize;
 use std::io::Write;
 
 fn main() {
-    // a vector type DS that will hold all the tasks.
     let mut tasks: TaskManager = TaskManager::load_from_file("tasks.json")
         .unwrap_or_else(|_| TaskManager { tasks: Vec::new() });
 
@@ -23,25 +22,18 @@ fn main() {
         match choice {
             1 => {
                 tasks.add_new_task();
-                tasks
-                    .save_to_file("tasks.json")
+                tasks.save_to_file("tasks.json")
                     .expect("failed to save new task.");
             }
             2 => {
                 tasks.update_task();
-                tasks
-                    .save_to_file("tasks.json")
+                tasks.save_to_file("tasks.json")
                     .expect("Failed to save update task.");
             }
             3 => {
                 if let Some(task) = tasks.delete() {
-                    // Use the deleted task here
-                    println!(
-                        "Deleted task: {}",
-                        task.task
-                    );
-                    tasks
-                        .save_to_file("tasks.json")
+                    println!("Deleted task: {}", task.task);
+                    tasks.save_to_file("tasks.json")
                         .expect("Failed to save delete task.");
                 } else {
                     println!("No task deleted.");
@@ -56,4 +48,3 @@ fn main() {
         }
     }
 }
-
