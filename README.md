@@ -12,4 +12,4 @@ This project incorporates several Rust basics, including structs, enums, modules
 
 
 ## Contact
-If you have any advise regarding the project, feel free to [email](mailto:abdulfaizshaikh55@gamil.com) me
+If you have any advise regarding the project, feel free to [email](mailto:abdulfaizshaikh55@gamil.com) me.

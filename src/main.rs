@@ -1,59 +1,71 @@
-mod task;
-mod task_manager;
-use crate::task_manager::TaskManager;
-use colored::Colorize;
-use std::io::Write;
+mod ui;
+use crossterm::event::{Event, KeyCode};
+use ui::StatefulList;
 
-fn main() {
-    // a vector type DS that will hold all the tasks.
-    let mut tasks: TaskManager = TaskManager::load_from_file("tasks.json")
-        .unwrap_or_else(|_| TaskManager { tasks: Vec::new() });
+use crossterm::terminal::{EnterAlternateScreen, enable_raw_mode, LeaveAlternateScreen, disable_raw_mode};
+use crossterm::{event, execute};
+use ratatui::Terminal;
+use ratatui::backend::CrosstermBackend;
+use std::io::stderr;
 
-    println!("Hello User! How can I help you?");
+fn main() -> std::io::Result<()> {
+    enable_raw_mode()?;
+    // let mut stderr = stderr();
+    execute!(stderr(), EnterAlternateScreen)?;
+    
+    let backend = CrosstermBackend::new(stderr());
+    let mut terminal = Terminal::new(backend)?;
+        
     loop {
-        print!("\n******************************\n✅ {0}\n➕ {1}\n⛔ {2}\n🫙 {3}\n📤 {4}\nChoose an option => ", "1. Add Task".bright_yellow(), "2. Update Task".bright_yellow(), "3. Delete Task".bright_yellow(), "4. Display list".bright_yellow(), "5. Exit".red());
+        
+        terminal.draw(ui::introduction)?;
 
-        std::io::stdout().flush().unwrap();
-        let mut choice: String = String::new();
-        std::io::stdin()
-            .read_line(&mut choice)
-            .expect("Failed to read input");
-        let choice: u8 = choice.trim().parse().expect("Enter a valid input");
-
-        match choice {
-            1 => {
-                tasks.add_new_task();
-                tasks
-                    .save_to_file("tasks.json")
-                    .expect("failed to save new task.");
-            }
-            2 => {
-                tasks.update_task();
-                tasks
-                    .save_to_file("tasks.json")
-                    .expect("Failed to save update task.");
-            }
-            3 => {
-                if let Some(task) = tasks.delete() {
-                    // Use the deleted task here
-                    println!(
-                        "Deleted task: {}",
-                        task.task
-                    );
-                    tasks
-                        .save_to_file("tasks.json")
-                        .expect("Failed to save delete task.");
-                } else {
-                    println!("No task deleted.");
+        if event::poll(std::time::Duration::from_millis(50))? {
+            if let Event::Key(key) = event::read()? {
+                if key.kind == event::KeyEventKind::Press {
+                    match key.code {
+                        KeyCode::Enter => break,
+                        _ => (),
+                    }
                 }
-            }
-            4 => tasks.display_all(),
-            5 => break,
-            _ => {
-                println!("❌ Invalid input. Try again");
-                continue;
             }
         }
     }
+
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
+
+    let mut stderr = stderr();
+    execute!(stderr, EnterAlternateScreen)?;
+    
+    let backend = CrosstermBackend::new(stderr);
+    let mut terminal = Terminal::new(backend)?;
+
+    let tasks = vec!["Eat".to_string(), "Code".to_string(), "Sleep".to_string(), "Repeat".to_string()];
+
+    let mut list_with_state = StatefulList::new(tasks);
+    
+    loop {
+        
+        terminal.draw(|f| ui::ui(f, &mut list_with_state))?;
+
+        if event::poll(std::time::Duration::from_millis(50))? {
+            if let Event::Key(key) = event::read()? {
+                if key.kind == event::KeyEventKind::Press {
+                    match key.code {
+                        KeyCode::Char('q') | KeyCode::Esc => break,
+                        KeyCode::Left => list_with_state.unselect(),
+                        KeyCode::Up => list_with_state.previous(),
+                        KeyCode::Down => list_with_state.next(),
+                        _ => (),
+                    }
+                }
+            }
+        }
+    }
+
+    disable_raw_mode()?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
+
+    Ok(())
 }
 
