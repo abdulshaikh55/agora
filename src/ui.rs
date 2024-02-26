@@ -1,36 +1,38 @@
 use ratatui::{
-    layout::{Alignment, Constraint, Direction, Layout}, style::{Modifier, Style, Stylize}, symbols, text::Text, widgets::{Block, Borders, List, ListState, Paragraph}, Frame
+    layout::{Constraint, Direction, Layout, Rect}, 
+    style::{Modifier, Style, Stylize}, 
+    symbols, 
+    text::{Span, Text}, 
+    widgets::{Block, Borders, /* Clear,*/ List, Paragraph, Wrap}, 
+    Frame
 };
 
+use crate::{app::CurrentScreen, controls::StatefulList};
+use crate::app::App;
+pub fn ui(frame: &mut Frame, list_with_state: &mut StatefulList, app: &App) {
 
-pub fn ui(frame: &mut Frame, list_with_state: &mut StatefulList) {
-
-   
     let layout = Layout::new(
         Direction::Vertical, 
         [
             Constraint::Length(3),
-            Constraint::Min(2)
+            Constraint::Min(2),
+            Constraint::Length(3),
         ]
     ).split(frame.size());
 
     let title_block = Block::default()
         .borders(Borders::ALL)
         .border_set(symbols::border::ROUNDED);
-
     let title_style = Style::default().fg(ratatui::style::Color::Green).bold();
-
     let title = Paragraph::new(Text::styled("Task Manager", title_style)).block(title_block).alignment(ratatui::layout::Alignment::Center);
 
     frame.render_widget(title, layout[0]); 
 
     let list_block =Block::default()
         .title("List")
-        .borders(Borders::ALL)
+        .borders(Borders::TOP | Borders::LEFT | Borders::RIGHT)
         .white();
-
     let list_style = Style::default().fg(ratatui::style::Color::Cyan);
-
     let list = List::new(list_with_state.tasks.clone())
         .block(list_block)
         .style(list_style)
@@ -41,95 +43,78 @@ pub fn ui(frame: &mut Frame, list_with_state: &mut StatefulList) {
         .highlight_symbol("* ");
 
     frame.render_stateful_widget(list, layout[1], &mut list_with_state.state);
+
+    // let navigation: Span<'_> = {
+    //     match app.current_screen {
+
+    //     }
+    // }
+
+    let footer_chunks = Layout::default()
+    .direction(Direction::Horizontal)
+    .constraints([
+        Constraint::Percentage(30),
+        Constraint::Percentage(70),
+    ])
+    .split(layout[2]);
+
+
+    let navigation = Paragraph::new(Span::styled(" Main Menu", 
+    Style::default().fg(ratatui::style::Color::Gray)))
+        .block(Block::default().borders(Borders::ALL));
+
+
+
+    let control_panel= Paragraph::new(Span::styled("[⬆] / [⬇] to move to your task, [➡️] to select [⬅] to unselect, [q] to quit",
+    Style::default().fg(ratatui::style::Color::Green)))
+        .block(Block::default().borders(Borders::ALL));
+
+    
+    
+    frame.render_widget(navigation, footer_chunks[0]);
+    frame.render_widget(control_panel, footer_chunks[1]);
+
+
+    if let CurrentScreen::Exiting = app.current_screen {
+        // frame.render_widget(Clear, frame.size()); // this clears the entire screen and anything already drawn
+        let popup_block = Block::default()
+            .borders(Borders::ALL)
+            .border_set(symbols::border::DOUBLE)
+            .style(Style::default().fg(ratatui::style::Color::DarkGray));
+
+        let exit_text = Text::styled("Do you want to exit Task Manager? [y]/[n]", 
+            Style::default().fg(ratatui::style::Color::Red));
+
+        let exit_paragraph = Paragraph::new(exit_text)
+            .block(popup_block)
+            .wrap(Wrap {trim: false});
+
+        let area = centered_rect(60, 25, frame.size());
+        frame.render_widget(exit_paragraph, area);
+    }
+
     
 }
 
-pub fn introduction(frame: &mut Frame) {
-    let layout = Layout::default()
+/// helper function to create a centered rect using up certain percentage of the available rect `r`
+fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
+    // Cut the given rectangle into three vertical pieces
+    let popup_layout = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
-            Constraint::Length(3), // This will show Task Manager
-            Constraint::Max(3),
-        ]).split(frame.size());
-    
-    let project_name = Paragraph::new(Text::styled("Welcome to Task Manager\nBy Abdulfaiz Shaikh", 
-        Style::default().bold().fg(ratatui::style::Color::LightGreen)
-        )
-    )
-    .block(Block::default().borders(Borders::ALL).title_alignment(Alignment::Center))
-    .alignment(Alignment::Center);
+            Constraint::Percentage((100 - percent_y) / 2),
+            Constraint::Percentage(percent_y),
+            Constraint::Percentage((100 - percent_y) / 2),
+        ])
+        .split(r);
 
-    frame.render_widget(project_name, layout[0]);
-
-    let writer_name = Paragraph::new(Text::styled("Press [enter] to continue", 
-        Style::default().fg(ratatui::style::Color::LightCyan)
-    )).block(Block::default().borders(Borders::ALL))
-    .alignment(Alignment::Center)
-    .rapid_blink();
-
-    frame.render_widget(writer_name, layout[1]);
-
-}
-
-
-pub struct StatefulList {
-    state: ListState,
-    tasks: Vec<String>,
-}
-
-impl StatefulList {
-    /// This function creates a new StatefulList with default state of the list.
-    pub fn new(tasks: Vec<String>) -> Self {
-        StatefulList {
-            state: ListState::default(),
-            tasks,
-        }
-    }
-
-    /// When called, this function initially sets the state of the list to 0. <br>
-    /// If already pointing to Some item in the list, it will point to the next item.
-    /// # Example 
-    /// if state = 3:  
-    /// after next is called,  
-    /// state = 4.  
-    /// If the state is pointing to the last item in the list, after next is called, it will point to the 0th item.
-    pub fn next(&mut self) {
-        let i = match self.state.selected() {
-            Some(i) => {
-                if i >= self.tasks.len() - 1 {
-                    0
-                } else {
-                    i + 1
-                }
-            },
-            None => 0,
-        };
-        self.state.select(Some(i));
-    }
-
-    /// When called, this function intitally sets the state of the list to 0.  
-    /// If already pointing to Some item in the list, it will point to the previous item.  
-    /// # Example
-    /// if state = 3:  
-    /// after previous is called,  
-    /// state = 2.  
-    /// If state is pointing to the 0th item in the list, after previous is called, it will point to the last item.
-    pub fn previous(&mut self) {
-        let i = match self.state.selected() {
-            Some(i) => {
-                if i == 0 {
-                    self.tasks.len() - 1
-                } else {
-                    i - 1
-                }
-            },
-            None => 0,
-        };
-        self.state.select(Some(i));
-    }
-
-    /// Unselect whatever the state pointing to.
-    pub fn unselect(&mut self) {
-        self.state.select(None);
-    }
+    // Then cut the middle vertical piece itno three width-wise pieces
+    Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+            Constraint::Percentage((100 - percent_x) / 2),
+            Constraint::Percentage(percent_x),
+            Constraint::Percentage((100 - percent_x) / 2),
+        ])
+        .split(popup_layout[1])[1]
 }

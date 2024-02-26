@@ -1,12 +1,11 @@
 use crate::task::{Priority, Status, Task};
-use colored::Colorize;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{self, Read, Write};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TaskManager {
-    pub tasks: Vec<Task>,
+    pub tasks: Vec<String>,
 }
 
 impl TaskManager {
