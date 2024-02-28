@@ -1,11 +1,11 @@
-mod ui;
-mod introduction;
 mod app;
 mod controls;
+mod introduction;
+mod ui;
 
-use introduction::introduction_frame;
 use app::{App, CurrentScreen};
 use controls::StatefulList;
+use introduction::introduction_frame;
 
 use crossterm::event::{Event, KeyCode};
 use crossterm::terminal::{
@@ -47,7 +47,12 @@ fn main() -> std::io::Result<()> {
     let backend = CrosstermBackend::new(stderr);
     let mut terminal = Terminal::new(backend)?;
 
-    let tasks = vec!["Eat".to_string(), "Code".to_string(), "Sleep".to_string(), "Repeat".to_string()];
+    let tasks = vec![
+        "Eat".to_string(),
+        "Code".to_string(),
+        "Sleep".to_string(),
+        "Repeat".to_string(),
+    ];
 
     // write data into tasks.json
     let data = serde_json::to_string(&tasks)?;
@@ -69,31 +74,40 @@ fn main() -> std::io::Result<()> {
 
         if event::poll(std::time::Duration::from_millis(16))? {
             if let Event::Key(key) = event::read()? {
-                if key.kind == event::KeyEventKind::Release{
+                if key.kind == event::KeyEventKind::Release {
                     continue;
-                } 
+                }
                 match app.current_screen {
                     CurrentScreen::Main => match key.code {
-                        KeyCode::Char('q') | KeyCode::Esc => app.current_screen = CurrentScreen::Exiting,
-                        KeyCode::Right => list_with_state.select(),
+                        KeyCode::Char('q') | KeyCode::Esc => {
+                            app.current_screen = CurrentScreen::Exiting
+                        }
+                        KeyCode::Right => {
+                            // list_with_state.select();
+                            app.current_screen = CurrentScreen::Task;
+                        }
                         KeyCode::Left => list_with_state.unselect(),
                         KeyCode::Up => list_with_state.previous(),
                         KeyCode::Down => list_with_state.next(),
                         _ => (),
                     },
-                    CurrentScreen::Task => todo!("After selecting the task, edit the various attributes"),
+                    CurrentScreen::Task => match key.code {
+                        KeyCode::Left => app.current_screen = CurrentScreen::Main,
+                        _ => (),
+                    },
+                    CurrentScreen::Editing => match key.code {
+                        KeyCode::Left => app.current_screen = CurrentScreen::Main,
+                        _ => (), // app.current_screen = CurrentScreen::Editing;
+                    },
                     CurrentScreen::Exiting => match key.code {
                         KeyCode::Char('y') => break,
                         KeyCode::Char('n') => {
                             app.current_screen = CurrentScreen::Main;
                             continue;
-                        },
+                        }
                         _ => (),
                     },
-                    CurrentScreen::Editing => ()
                 }
-
-
             }
         }
     }
