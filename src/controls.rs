@@ -16,7 +16,7 @@ impl StatefulList {
 
     /// When called, this function initially sets the state of the list to 0. <br>
     /// If already pointing to Some item in the list, it will point to the next item.
-    /// # Example 
+    /// # Example
     /// if state = 3:  
     /// after next is called,  
     /// state = 4.  
@@ -29,7 +29,7 @@ impl StatefulList {
                 } else {
                     i + 1
                 }
-            },
+            }
             None => 0,
         };
         self.state.select(Some(i));
@@ -50,7 +50,7 @@ impl StatefulList {
                 } else {
                     i - 1
                 }
-            },
+            }
             None => 0,
         };
         self.state.select(Some(i));
@@ -61,13 +61,9 @@ impl StatefulList {
         self.state.select(None);
     }
 
-    pub fn select(&mut self) {
-        if self.state.selected() == None {
-            todo!("return the task index, so that it can be displayed on CurrentScreen::Task")
-        } else {
-            todo!()
-        }
-    }
+    // pub fn select(&mut self) -> Option<usize> {
+    //     self.state.selected()
+    // }
 }
 
 #[cfg(test)]
@@ -77,39 +73,70 @@ mod controls_tests {
 
     #[test]
     fn test_select_down() {
-        let tasks = vec!["test task 1".to_string(), "test task 2".to_string(), "test task 3".to_string()];
+        let tasks = vec![
+            "test task 1".to_string(),
+            "test task 2".to_string(),
+            "test task 3".to_string(),
+        ];
 
         let mut list_with_state = StatefulList::new(tasks);
         list_with_state.next();
 
-        assert_eq!(Some(0), list_with_state.state.selected(), "ListState not initialized");
+        assert_eq!(
+            Some(0),
+            list_with_state.state.selected(),
+            "ListState not initialized"
+        );
         list_with_state.next();
 
-        assert_eq!(Some(1), list_with_state.state.selected(), "ListState not incremented");
+        assert_eq!(
+            Some(1),
+            list_with_state.state.selected(),
+            "ListState not incremented"
+        );
     }
 
     #[test]
     fn test_select_up() {
-        let tasks = vec!["test task 1".to_string(), "test task 2".to_string(), "test task 3".to_string()];
+        let tasks = vec![
+            "test task 1".to_string(),
+            "test task 2".to_string(),
+            "test task 3".to_string(),
+        ];
 
         let mut list_with_state = StatefulList::new(tasks);
         list_with_state.previous();
 
-        assert_eq!(Some(0), list_with_state.state.selected(), "ListState not initialized");
+        assert_eq!(
+            Some(0),
+            list_with_state.state.selected(),
+            "ListState not initialized"
+        );
         list_with_state.previous();
 
-        assert_eq!(Some(list_with_state.tasks.len() - 1), list_with_state.state.selected(), "ListState not decremented");
+        assert_eq!(
+            Some(list_with_state.tasks.len() - 1),
+            list_with_state.state.selected(),
+            "ListState not decremented"
+        );
     }
 
     #[test]
     fn test_unselect() {
-        let tasks = vec!["test task 1".to_string(), "test task 2".to_string(), "test task 3".to_string()];
+        let tasks = vec![
+            "test task 1".to_string(),
+            "test task 2".to_string(),
+            "test task 3".to_string(),
+        ];
 
         let mut list_with_state = StatefulList::new(tasks);
         list_with_state.previous();
         list_with_state.unselect();
-        assert_eq!(None, list_with_state.state.selected(), "ListState not unselected");
+        assert_eq!(
+            None,
+            list_with_state.state.selected(),
+            "ListState not unselected"
+        );
         list_with_state.previous();
-
     }
 }

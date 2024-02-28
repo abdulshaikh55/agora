@@ -7,11 +7,10 @@
 4. Add an exit popup
 
 # Ongoing
-1. Enter function in controls.rs When you press enter, it will display the task in popup.
-2. [] try to figure out what to do with app.rs and task.rs
-3. Add test to modules [testing will go on until the project is finished]
-4. When user selects one of the tasks, display it on a popup block.
-5. display how to navigate through various tabs.
+1. [] try to figure out what to do with app.rs and task.rs
+2. Add test to modules [testing will go on until the project is finished]
+3. When user selects one of the tasks, display it on a popup block.
+4. display how to navigate through various tabs.
 
 
 # NotStarted
