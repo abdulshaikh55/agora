@@ -1,16 +1,19 @@
+use std::ops::Deref;
+
 use ratatui::widgets::ListState;
 
+use crate::task_management::Task;
 pub struct StatefulList {
     pub state: ListState,
-    pub tasks: Vec<String>,
+    pub tasks: Vec<Task>,
 }
 
 impl StatefulList {
     /// This function creates a new StatefulList with default state of the list.
-    pub fn new(tasks: Vec<String>) -> Self {
+    pub fn new(tasks: &Vec<Task>) -> Self {
         Self {
             state: ListState::default(),
-            tasks,
+            tasks: Into::<Vec<_>>::into(tasks.deref()),
         }
     }
 
@@ -64,6 +67,21 @@ impl StatefulList {
     // pub fn select(&mut self) -> Option<usize> {
     //     self.state.selected()
     // }
+
+    /// This function extracts only the tasks in the task manager and appends it
+    pub fn extract_task_string_only(&mut self) -> Vec<String> {
+        self.tasks
+            .iter()
+            .map(|task| format!("{}", &task.task))
+            .collect()
+    }
+
+    pub fn extract_specific_task_string_only(&mut self, idx: usize) -> String {
+        let task = self.tasks.get(idx).unwrap();
+        task.task.clone()
+    }
+
+    // fn unchange_selected_string(&mut self) {}
 }
 
 #[cfg(test)]
@@ -73,13 +91,22 @@ mod controls_tests {
 
     #[test]
     fn test_select_down() {
-        let tasks = vec![
-            "test task 1".to_string(),
-            "test task 2".to_string(),
-            "test task 3".to_string(),
+        let tasks: Vec<Task> = vec![
+            Task {
+                task: "Eat".to_string(),
+            },
+            Task {
+                task: "Code".to_string(),
+            },
+            Task {
+                task: "Sleep".to_string(),
+            },
+            Task {
+                task: "Repeat".to_string(),
+            },
         ];
 
-        let mut list_with_state = StatefulList::new(tasks);
+        let mut list_with_state = StatefulList::new(&tasks);
         list_with_state.next();
 
         assert_eq!(
@@ -98,13 +125,22 @@ mod controls_tests {
 
     #[test]
     fn test_select_up() {
-        let tasks = vec![
-            "test task 1".to_string(),
-            "test task 2".to_string(),
-            "test task 3".to_string(),
+        let tasks: Vec<Task> = vec![
+            Task {
+                task: "Eat".to_string(),
+            },
+            Task {
+                task: "Code".to_string(),
+            },
+            Task {
+                task: "Sleep".to_string(),
+            },
+            Task {
+                task: "Repeat".to_string(),
+            },
         ];
 
-        let mut list_with_state = StatefulList::new(tasks);
+        let mut list_with_state = StatefulList::new(&tasks);
         list_with_state.previous();
 
         assert_eq!(
@@ -123,13 +159,22 @@ mod controls_tests {
 
     #[test]
     fn test_unselect() {
-        let tasks = vec![
-            "test task 1".to_string(),
-            "test task 2".to_string(),
-            "test task 3".to_string(),
+        let tasks: Vec<Task> = vec![
+            Task {
+                task: "Eat".to_string(),
+            },
+            Task {
+                task: "Code".to_string(),
+            },
+            Task {
+                task: "Sleep".to_string(),
+            },
+            Task {
+                task: "Repeat".to_string(),
+            },
         ];
 
-        let mut list_with_state = StatefulList::new(tasks);
+        let mut list_with_state = StatefulList::new(&tasks);
         list_with_state.previous();
         list_with_state.unselect();
         assert_eq!(

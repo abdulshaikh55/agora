@@ -1,17 +1,20 @@
 // use serde::{Deserialize, Serialize};
 
-pub enum CurrentScreen {
-    Main,    // screen to display all the tasks
-    Task,    // screen to display a specific task
-    Editing, // screen to modify a specific task
-    Exiting, // screen to confirm exit
-}
-
+/// Used to jump between task subsections while editng
 pub enum CurrentlyEditing {
     Task,
     DueDate,
     Status,
     Priority,
+}
+
+/// This enum is used to jump between screens.
+pub enum CurrentScreen {
+    New,     // screen to add a new task
+    Main,    // screen to display all the tasks
+    Task,    // screen to display a specific task
+    Editing, // screen to modify a specific task
+    Exiting, // screen to confirm exit
 }
 
 pub struct App {
@@ -26,29 +29,14 @@ impl App {
             currently_editing: None,
         }
     }
-}
 
-mod task {
-
-    // #[derive(Debug, Serialize, Deserialize)]
-    pub enum Status {
-        NotStarted,
-        Ongoing,
-        Completed, // Just like my to-do list: never started, always ongoing, never completed!
+    pub fn change_screen(&mut self, screen: CurrentScreen) {
+        self.current_screen = screen;
     }
 
-    // #[derive(Debug, Serialize, Deserialize)]
-    pub enum Priority {
-        Urgent,
-        Important,
-        Normal,
+    pub fn change_editing(&mut self, edit: Option<CurrentlyEditing>) {
+        self.currently_editing = edit;
     }
 
-    // #[derive(Debug, Serialize, Deserialize)]
-    pub struct Task {
-        pub task: String,
-        // pub due_date: String,
-        // pub status: Status,
-        // pub priority: Priority,
-    }
+    // pub fn next_edit(&mut self,)
 }
