@@ -10,9 +10,15 @@ use ratatui::{
 };
 
 use crate::app::App;
+use crate::task_management::TaskManager;
 use crate::{app::CurrentScreen, controls::StatefulList};
 
-pub fn ui(frame: &mut Frame, list_with_state: &mut StatefulList, app: &App) {
+pub fn ui(
+    frame: &mut Frame,
+    list_with_state: &mut StatefulList,
+    app: &App,
+    task_manager: &TaskManager,
+) {
     let layout: Rc<[Rect]> = create_main_layout(frame.size());
 
     render_title(frame, layout[0]);
@@ -26,20 +32,49 @@ pub fn ui(frame: &mut Frame, list_with_state: &mut StatefulList, app: &App) {
 
     render_footer(frame, footer_chunks, app);
 
+    if let CurrentScreen::New = app.current_screen {
+        let area = centered_rect(60, 25, frame.size());
+
+        let popup_new_layout = Layout::new(
+            Direction::Vertical,
+            [
+                Constraint::Percentage(40),
+                // Constraint::Percentage(20),
+                // Constraint::Percentage(20),
+            ],
+        )
+        .split(area);
+
+        let task_input = popup_new_layout[0];
+
+        let new_task_block = Block::default()
+            .borders(Borders::ALL)
+            .border_set(symbols::border::DOUBLE)
+            .style(Style::default().bg(ratatui::style::Color::Yellow));
+
+        let task = Paragraph::new(task_manager.input_task.clone()).block(new_task_block);
+
+        frame.render_widget(task, task_input);
+    }
+
     // When you enter a Task section, this popup will appear
     if let CurrentScreen::Task = app.current_screen {
         // frame.render_widget(Clear, frame.size()); // this clears the entire screen and anything already drawn
         let popup_task_block = Block::default()
             .borders(Borders::ALL)
             .border_set(symbols::border::DOUBLE)
-            .style(Style::default().fg(ratatui::style::Color::DarkGray));
+            .style(Style::default().bg(ratatui::style::Color::DarkGray));
 
         let task_string: String;
         if list_with_state.state.selected() == None {
             task_string = "No task Selected".to_string();
         } else {
+            let idx = list_with_state.state.selected().unwrap();
             // we are using tasks : Vec<String>
-            task_string = list_with_state.tasks[list_with_state.state.selected().unwrap()].clone();
+            task_string = format!(
+                "  {}",
+                list_with_state.extract_specific_task_string_only(idx)
+            );
             // create variable of selected task.
         }
 
@@ -50,7 +85,7 @@ pub fn ui(frame: &mut Frame, list_with_state: &mut StatefulList, app: &App) {
         let display_task = Paragraph::new(styled_task)
             .block(popup_task_block)
             .wrap(Wrap { trim: false });
-        let area = centered_rect(20, 20, frame.size());
+        let area = centered_rect(50, 50, frame.size());
 
         frame.render_widget(display_task, area);
     }
@@ -63,7 +98,7 @@ pub fn ui(frame: &mut Frame, list_with_state: &mut StatefulList, app: &App) {
             .style(Style::default().fg(ratatui::style::Color::DarkGray));
 
         let exit_text = Text::styled(
-            "Do you want to exit Task Manager?",
+            " Do you want to exit Task Manager?",
             Style::default().fg(ratatui::style::Color::Red),
         );
 
@@ -107,7 +142,7 @@ fn render_list(frame: &mut Frame, area: Rect, list_with_state: &mut StatefulList
         .borders(Borders::TOP | Borders::LEFT | Borders::RIGHT)
         .white();
     let list_style = Style::default().fg(ratatui::style::Color::Cyan);
-    let list = List::new(list_with_state.tasks.clone())
+    let list = List::new(list_with_state.extract_task_string_only())
         .block(list_block)
         .style(list_style)
         .highlight_style(
@@ -115,7 +150,7 @@ fn render_list(frame: &mut Frame, area: Rect, list_with_state: &mut StatefulList
                 .fg(ratatui::style::Color::White)
                 .add_modifier(Modifier::BOLD),
         )
-        .highlight_symbol("* ");
+        .highlight_symbol("[*]");
 
     frame.render_stateful_widget(list, area, &mut list_with_state.state);
 }
@@ -137,13 +172,17 @@ fn render_footer(frame: &mut Frame, area: Rc<[Rect]>, app: &App) {
         CurrentScreen::Exiting => {
             Line::styled(" Exiting", Style::default().fg(ratatui::style::Color::Red))
         }
+        CurrentScreen::New => Line::styled(
+            " New Task",
+            Style::default().fg(ratatui::style::Color::Blue),
+        ),
     };
     let navigation = Paragraph::new(navigation).block(Block::default().borders(Borders::ALL));
     frame.render_widget(navigation, area[0]);
 
     let control_panel = match app.current_screen {
         CurrentScreen::Main => Line::styled(
-            " [⬆] / [⬇] to move, [➡] to select [⬅] to unselect, [q] to quit",
+            " [➡] / [⬅] select / unselect, [Enter] for new, [Esc] to exit",
             Style::default().fg(ratatui::style::Color::Green),
         ),
         CurrentScreen::Editing => Line::styled(
@@ -151,11 +190,15 @@ fn render_footer(frame: &mut Frame, area: Rc<[Rect]>, app: &App) {
             Style::default().fg(ratatui::style::Color::Green),
         ),
         CurrentScreen::Task => Line::styled(
-            " [⬆] / [⬇] to move, [➡] to select [⬅] to unselect",
+            " [⬆] / [⬇] to move, [➡] to Edit [⬅] to Main Menu",
             Style::default().fg(ratatui::style::Color::Green),
         ),
         CurrentScreen::Exiting => Line::styled(
             " [y] for yes, [n] for no",
+            Style::default().fg(ratatui::style::Color::Green),
+        ),
+        CurrentScreen::New => Line::styled(
+            " [Esc] to go back, [Enter] to continue",
             Style::default().fg(ratatui::style::Color::Green),
         ),
     };
@@ -221,9 +264,19 @@ mod ui_test {
 
         let expected_sizes: Rc<[Rect]> = [
             // Title: 3 units of height (assuming full width)
-            Rect { x: 0, y: 0, width: 80, height: 3 },
+            Rect {
+                x: 0,
+                y: 0,
+                width: 80,
+                height: 3,
+            },
             // List: Min height of 2 (assuming full width)
-            Rect { x: 0, y: 3, width: 80, height: 19 },
+            Rect {
+                x: 0,
+                y: 3,
+                width: 80,
+                height: 19,
+            },
             // Footer: 3 units of height (assuming full width)
             Rect {
                 x: 0,
@@ -231,7 +284,8 @@ mod ui_test {
                 width: 80,
                 height: 3,
             },
-        ].into();
+        ]
+        .into();
 
         for (i, rect) in layout.iter().enumerate() {
             assert_eq!(*rect, expected_sizes[i], "Element {} size mismatch", i);
