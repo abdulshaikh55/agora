@@ -3,9 +3,9 @@ mod controls;
 mod task_management;
 mod ui;
 
-use app::{App, CurrentScreen};
+use app::{App, CurrentScreen, CurrentlyEditing};
 use controls::StatefulList;
-use task_management::{Task, TaskManager};
+use task_management::{Priority, Status, Task, TaskManager};
 
 use crossterm::event::{Event, KeyCode};
 use crossterm::terminal::{
@@ -31,15 +31,23 @@ fn main() -> std::io::Result<()> {
     let tasks: Vec<Task> = vec![
         Task {
             task: "Eat".to_string(),
+            priority: Priority::Important,
+            status: Status::NotStarted,
         },
         Task {
             task: "Code".to_string(),
+            priority: Priority::Important,
+            status: Status::NotStarted,
         },
         Task {
             task: "Sleep".to_string(),
+            priority: Priority::Important,
+            status: Status::NotStarted,
         },
         Task {
             task: "Repeat".to_string(),
+            priority: Priority::Important,
+            status: Status::NotStarted,
         },
     ];
     // vec![
@@ -75,7 +83,7 @@ fn main() -> std::io::Result<()> {
                 match app.current_screen {
                     CurrentScreen::Main => match key.code {
                         // Go to exit screen when [Esc] is pressed
-                        KeyCode::Esc => app.change_screen(CurrentScreen::Exiting),
+                        KeyCode::Esc => break, // app.change_screen(CurrentScreen::Exiting),
                         // Go to new screen when [=] is pressed
                         KeyCode::Enter => app.change_screen(CurrentScreen::New),
                         // Task list navigation section
@@ -85,11 +93,33 @@ fn main() -> std::io::Result<()> {
                         KeyCode::Down => task_with_state.next(),
                         _ => (),
                     },
-                    CurrentScreen::New => match key.code {
-                        KeyCode::Esc => app.change_screen(CurrentScreen::Main),
-                        KeyCode::Char(c) => task_manager.input_task.push(c),
-                        KeyCode::Backspace => _ = task_manager.input_task.pop().unwrap(),
-                        _ => (),
+                    CurrentScreen::New => match app.currently_editing {
+                        CurrentlyEditing::Task => match key.code {
+                            KeyCode::Esc => app.change_screen(CurrentScreen::Main),
+                            KeyCode::Char(c) => task_manager.input_task_string.push(c),
+                            KeyCode::Backspace => {
+                                if !task_manager.input_task_string.is_empty() {
+                                    task_manager.input_task_string.pop().unwrap();
+                                }
+                            }
+                            KeyCode::Up | KeyCode::Down => app.toggle_task_priority(),
+                            KeyCode::Right | KeyCode::Left => app.toggle_priority_status(),
+                            _ => (),
+                        },
+                        CurrentlyEditing::Priority => match key.code {
+                            KeyCode::Esc => app.change_screen(CurrentScreen::Main),
+                            KeyCode::Up | KeyCode::Down => app.toggle_task_priority(),
+                            KeyCode::Right | KeyCode::Left => app.toggle_priority_status(),
+                            KeyCode::Tab => task_manager.switch_priority_value(),
+                            _ => (),
+                        },
+                        CurrentlyEditing::Status => match key.code {
+                            KeyCode::Esc => app.change_screen(CurrentScreen::Main),
+                            KeyCode::Up | KeyCode::Down => app.toggle_task_priority(),
+                            KeyCode::Right | KeyCode::Left => app.toggle_priority_status(),
+                            KeyCode::Tab => task_manager.switch_status_value(),
+                            _ => (),
+                        },
                     },
                     CurrentScreen::Task => match key.code {
                         KeyCode::Left => app.change_screen(CurrentScreen::Main),
@@ -102,14 +132,15 @@ fn main() -> std::io::Result<()> {
                         KeyCode::Down => (),
                         _ => (), // app.change_screen(CurrentScreen::Editing(Some(edit)));
                     },
-                    CurrentScreen::Exiting => match key.code {
-                        KeyCode::Char('y') => break,
-                        KeyCode::Char('n') => {
-                            app.change_screen(CurrentScreen::Main);
-                            continue;
-                        }
-                        _ => (),
-                    },
+                    CurrentScreen::Exiting => (),
+                    // match key.code {
+                    //     KeyCode::Char('y') => break,
+                    //     KeyCode::Char('n') => {
+                    //         app.change_screen(CurrentScreen::Main);
+                    //         continue;
+                    //     }
+                    //     _ => (),
+                    // },
                 }
             }
         }

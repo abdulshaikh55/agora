@@ -2,7 +2,8 @@ use std::ops::Deref;
 
 use ratatui::widgets::ListState;
 
-use crate::task_management::Task;
+#[allow(dead_code)]
+use crate::task_management::{Priority, Status, Task};
 pub struct StatefulList {
     pub state: ListState,
     pub tasks: Vec<Task>,
@@ -94,15 +95,23 @@ mod controls_tests {
         let tasks: Vec<Task> = vec![
             Task {
                 task: "Eat".to_string(),
+                priority: Priority::Important,
+                status: Status::NotStarted,
             },
             Task {
                 task: "Code".to_string(),
+                priority: Priority::Important,
+                status: Status::NotStarted,
             },
             Task {
                 task: "Sleep".to_string(),
+                priority: Priority::Important,
+                status: Status::NotStarted,
             },
             Task {
                 task: "Repeat".to_string(),
+                priority: Priority::Important,
+                status: Status::NotStarted,
             },
         ];
 
@@ -128,15 +137,23 @@ mod controls_tests {
         let tasks: Vec<Task> = vec![
             Task {
                 task: "Eat".to_string(),
+                priority: Priority::Important,
+                status: Status::NotStarted,
             },
             Task {
                 task: "Code".to_string(),
+                priority: Priority::Important,
+                status: Status::NotStarted,
             },
             Task {
                 task: "Sleep".to_string(),
+                priority: Priority::Important,
+                status: Status::NotStarted,
             },
             Task {
                 task: "Repeat".to_string(),
+                priority: Priority::Important,
+                status: Status::NotStarted,
             },
         ];
 
@@ -162,15 +179,23 @@ mod controls_tests {
         let tasks: Vec<Task> = vec![
             Task {
                 task: "Eat".to_string(),
+                priority: Priority::Important,
+                status: Status::NotStarted,
             },
             Task {
                 task: "Code".to_string(),
+                priority: Priority::Important,
+                status: Status::NotStarted,
             },
             Task {
                 task: "Sleep".to_string(),
+                priority: Priority::Important,
+                status: Status::NotStarted,
             },
             Task {
                 task: "Repeat".to_string(),
+                priority: Priority::Important,
+                status: Status::NotStarted,
             },
         ];
 
