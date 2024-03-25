@@ -1,35 +1,26 @@
-# Task Manager TUI
+# Completed
+1. Display the tasks from the json file on the main screen. 
+2. Add the footer to display 
+   1. where the user is
+   2. display the control options
+3. Update the introduction function
+4. Add an exit popup
 
-We have started learning and applying the Ratatui to turn our cli to tui. 
-Ratatui applications are generally divided into modules that help us organize our application into different parts
-The following will be the modules in our applications
-1. main.rs
-2. ui.rs
-3. app.rs
-4. tasks.rs 
-5. task_manager.rs
+# Ongoing
+1. [] try to figure out what to do with app.rs and task.rs
+2. Add test to modules [testing will go on until the project is finished]
+3. When user selects one of the tasks, display it on a popup block.
+4. display how to navigate through various tabs.
 
-## What functions have been added?
-Introduction page:
-<img src="./images/task_manager_introduction.png">
 
-Main screen:
-<img src="./images/task_manager_main_screen.png">  
+# NotStarted
+1. Mini features
+   1. If task is `NotStarted`, display it in blue.
+   2. If task is `Ongoing`, display it in yellow.
+   3. If task is `Complete`, display it in green.
+2. Group together relevant section of code and divide them into modules to improve readability.
 
-Select tasks:
-<img src="./images/select_tasks.png">
 
-ui and app will be our frontend whereas tasks and task_manager will be our backend.
 
-Our application will have four screens:
-1. main screen: this screen will display all the tasks on the terminal
-2. task screen: this screen will display information about the task we have chosen
-3. edit screen: this screen will contain the editing tools of our tasks
-4. exit screen: this screen will display message 'do you really want to exit?'
-
-Mini features
-1. If task is `NotStarted`, display it in blue.
-2. If task is `Ongoing`, display it in yellow.
-3. If task is `Complete`, display it in green.
-
-Decision to be made whether to display a new screen altogether while changing tabs or have a pop-up screen.
+# So far
+![Task Manager So Far](./resources/task_manager_process.mp4)
