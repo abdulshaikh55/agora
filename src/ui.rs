@@ -9,18 +9,18 @@ use ratatui::{
     Frame,
 };
 
+use crate::app::CurrentScreen;
 use crate::{app::App, task_management::Status};
-use crate::{app::CurrentScreen, controls::StatefulList};
 use crate::{
     app::CurrentlyEditing,
-    task_management::{Priority, TaskManager},
+    task_management::{Priority, StatefulList, TaskManager},
 };
 
 pub fn ui(
     frame: &mut Frame,
-    list_with_state: &mut StatefulList,
     app: &App,
     task_manager: &TaskManager,
+    list_with_state: &mut StatefulList,
 ) {
     let layout: Rc<[Rect]> = create_main_layout(frame.size());
 
@@ -67,59 +67,58 @@ pub fn ui(
             second_section[1],
             &app.currently_editing,
         );
+    }
+    // When you enter a Task section, this popup will appear
+    if let CurrentScreen::Task = app.current_screen {
+        // frame.render_widget(Clear, frame.size()); // this clears the entire screen and anything already drawn
+        let popup_task_block = Block::default()
+            .borders(Borders::ALL)
+            .border_set(symbols::border::DOUBLE)
+            .style(Style::default().bg(ratatui::style::Color::DarkGray));
 
-        // When you enter a Task section, this popup will appear
-        if let CurrentScreen::Task = app.current_screen {
-            // frame.render_widget(Clear, frame.size()); // this clears the entire screen and anything already drawn
-            let popup_task_block = Block::default()
-                .borders(Borders::ALL)
-                .border_set(symbols::border::DOUBLE)
-                .style(Style::default().bg(ratatui::style::Color::DarkGray));
-
-            let task_string: String;
-            if list_with_state.state.selected() == None {
-                task_string = "No task Selected".to_string();
-            } else {
-                let idx = list_with_state.state.selected().unwrap();
-                // we are using tasks : Vec<String>
-                task_string = format!(
-                    "  {}",
-                    list_with_state.extract_specific_task_string_only(idx)
-                );
-                // create variable of selected task.
-            }
-
-            let styled_task = Text::styled(
-                task_string,
-                Style::default().fg(ratatui::style::Color::Green).bold(),
+        let task_string: String;
+        if list_with_state.state.selected() == None {
+            task_string = "No task Selected".to_string();
+        } else {
+            let idx = list_with_state.state.selected().unwrap();
+            // we are using tasks : Vec<String>
+            task_string = format!(
+                "  {}",
+                list_with_state.extract_specific_task_string_only(idx)
             );
-            let display_task = Paragraph::new(styled_task)
-                .block(popup_task_block)
-                .wrap(Wrap { trim: false });
-            let area = centered_rect(50, 50, frame.size());
-
-            frame.render_widget(display_task, area);
+            // create variable of selected task.
         }
 
-        if let CurrentScreen::Exiting = app.current_screen {
-            // frame.render_widget(Clear, frame.size()); // this clears the entire screen and anything already drawn
-            let popup_block = Block::default()
-                .borders(Borders::ALL)
-                .border_set(symbols::border::DOUBLE)
-                .style(Style::default().fg(ratatui::style::Color::DarkGray));
+        let styled_task = Text::styled(
+            task_string,
+            Style::default().fg(ratatui::style::Color::Green).bold(),
+        );
+        let display_task = Paragraph::new(styled_task)
+            .block(popup_task_block)
+            .wrap(Wrap { trim: false });
+        let area = centered_rect(50, 50, frame.size());
 
-            let exit_text = Text::styled(
-                " Do you want to exit Task Manager?",
-                Style::default().fg(ratatui::style::Color::Red),
-            );
+        frame.render_widget(display_task, area);
+    }
 
-            let exit_paragraph = Paragraph::new(exit_text)
-                .block(popup_block)
-                .wrap(Wrap { trim: false });
+    if let CurrentScreen::Exiting = app.current_screen {
+        // frame.render_widget(Clear, frame.size()); // this clears the entire screen and anything already drawn
+        let popup_block = Block::default()
+            .borders(Borders::ALL)
+            .border_set(symbols::border::DOUBLE)
+            .style(Style::default().fg(ratatui::style::Color::DarkGray));
 
-            let area = centered_rect(60, 25, frame.size());
-            frame.render_widget(exit_paragraph, area);
-        }
+        let exit_text = Text::styled(
+            " Do you want to exit Task Manager?",
+            Style::default().fg(ratatui::style::Color::Red),
+        );
+
+        let exit_paragraph = Paragraph::new(exit_text)
+            .block(popup_block)
+            .wrap(Wrap { trim: false });
+
+        let area = centered_rect(60, 25, frame.size());
+        frame.render_widget(exit_paragraph, area);
     }
 }
 
@@ -210,7 +209,7 @@ fn render_footer(frame: &mut Frame, area: Rc<[Rect]>, app: &App) {
             Style::default().fg(ratatui::style::Color::Green),
         ),
         CurrentScreen::New => Line::styled(
-            " [Esc] to go back, [Enter] to continue",
+            " [Esc] to go back, [Enter] to continue, [Arrow] to toggle aspects",
             Style::default().fg(ratatui::style::Color::Green),
         ),
     };

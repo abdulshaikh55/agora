@@ -16,6 +16,7 @@ We have organized the documentation to make it easy for you to navigate and find
 8. [Project Theta](ProjectTheta.md)
 9. [Project Iota](ProjectIota.md)
 10. [Project Kappa](ProjectKappa.md)
+11. [Project Lambda](ProjectLambda.md)
 
 We hope you find this documentation helpful and informative. Happy exploring!
 
