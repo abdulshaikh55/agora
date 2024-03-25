@@ -1,16 +1,26 @@
 # Completed
-1. Resolved the issues between app.rs and task.rs.
-2. When user selects one of the tasks, display it on a popup block.
-3. display how to navigate through various tabs.
-4. Made ui.rs readable
-5. Added tests for ui.rs
+1. Display the tasks from the json file on the main screen. 
+2. Add the footer to display 
+   1. where the user is
+   2. display the control options
+3. Update the introduction function
+4. Add an exit popup
+
+# Ongoing
+1. [] try to figure out what to do with app.rs and task.rs
+2. Add test to modules [testing will go on until the project is finished]
+3. When user selects one of the tasks, display it on a popup block.
+4. display how to navigate through various tabs.
 
 
-#  NotStarted
-1. Do something about the panics. The app should exit the alternate screen and then show all the errors.
-2. Set up a different section/ module/ file for file input and output
-3. implement task::Task {task, duedate...} into the project. i.e. instead of a Vec<string> of tasks, display a Vec<Task>.
-4. controls for CurrentScreen::Edit.
-5. render all the information about selected tasks on the Task tab.
-6. Make the documents more readable.
-7. Fix the image and video not rendering on markdowns.
+# NotStarted
+1. Mini features
+   1. If task is `NotStarted`, display it in blue.
+   2. If task is `Ongoing`, display it in yellow.
+   3. If task is `Complete`, display it in green.
+2. Group together relevant section of code and divide them into modules to improve readability.
+
+
+
+# So far
+![Task Manager So Far](./resources/task_manager_process.mp4)
