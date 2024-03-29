@@ -41,7 +41,7 @@ fn main() -> std::io::Result<()> {
     let mut task_with_state = StatefulList::new(&task_manager.tasks);
 
     loop {
-        terminal.draw(|f| ui::ui(f, &app, &task_manager, &mut task_with_state))?;
+        terminal.draw(|f| ui::ui(f, &app, &mut task_manager, &mut task_with_state))?;
 
         if event::poll(std::time::Duration::from_millis(16))? {
             if let Event::Key(key) = event::read()? {
@@ -55,9 +55,28 @@ fn main() -> std::io::Result<()> {
                         KeyCode::Enter => app.change_screen(CurrentScreen::New),
                         // Task list navigation section
                         KeyCode::Right => app.change_screen(CurrentScreen::Task),
-                        KeyCode::Left => task_with_state.unselect(),
-                        KeyCode::Up => task_with_state.previous(),
-                        KeyCode::Down => task_with_state.next(),
+                        KeyCode::Left => {
+                            if task_with_state.tasks.is_empty() {
+                                app.change_screen(CurrentScreen::New)
+                            } else {
+                                task_with_state.unselect()
+                            }
+                        }
+                        KeyCode::Up => {
+                            if task_with_state.tasks.is_empty() {
+                                app.change_screen(CurrentScreen::New)
+                            } else {
+                                task_with_state.previous()
+                            }
+                        }
+                        KeyCode::Down => {
+                            if task_with_state.tasks.is_empty() {
+                                app.change_screen(CurrentScreen::New)
+                            } else {
+                                task_with_state.next()
+                            }
+                        }
+                        KeyCode::Delete => app.change_screen(CurrentScreen::Delete),
                         _ => (),
                     },
                     CurrentScreen::New => match app.currently_editing {
@@ -73,7 +92,7 @@ fn main() -> std::io::Result<()> {
                             KeyCode::Right | KeyCode::Left => app.toggle_priority_status(),
                             KeyCode::Enter => {
                                 if !task_manager.input_task_string.is_empty() {
-                                    task_manager.save_instance_task();
+                                    task_manager.save_new_task();
                                     task_with_state = StatefulList::new(&task_manager.tasks);
                                 }
                                 app.change_screen(CurrentScreen::Main)
@@ -87,7 +106,7 @@ fn main() -> std::io::Result<()> {
                             KeyCode::Tab => task_manager.switch_priority_value(),
                             KeyCode::Enter => {
                                 if !task_manager.input_task_string.is_empty() {
-                                    task_manager.save_instance_task();
+                                    task_manager.save_new_task();
                                     task_with_state = StatefulList::new(&task_manager.tasks);
                                 }
                                 app.change_screen(CurrentScreen::Main)
@@ -101,7 +120,7 @@ fn main() -> std::io::Result<()> {
                             KeyCode::Tab => task_manager.switch_status_value(),
                             KeyCode::Enter => {
                                 if !task_manager.input_task_string.is_empty() {
-                                    task_manager.save_instance_task();
+                                    task_manager.save_new_task();
                                     task_with_state = StatefulList::new(&task_manager.tasks);
                                 }
                                 app.change_screen(CurrentScreen::Main)
@@ -110,17 +129,91 @@ fn main() -> std::io::Result<()> {
                         },
                     },
                     CurrentScreen::Task => match key.code {
-                        KeyCode::Left => app.change_screen(CurrentScreen::Main),
+                        KeyCode::Left | KeyCode::Esc => app.change_screen(CurrentScreen::Main),
                         KeyCode::Right => app.change_screen(CurrentScreen::Editing),
                         _ => (),
                     },
-                    CurrentScreen::Editing => match key.code {
-                        KeyCode::Left => app.change_screen(CurrentScreen::Task),
-                        KeyCode::Down => (),
-                        _ => (), // app.change_screen(CurrentScreen::Editing(Some(edit)));
-                    },
+                    CurrentScreen::Editing => {
+                        match app.currently_editing {
+                            CurrentlyEditing::Task => match key.code {
+                                KeyCode::Esc => {
+                                    app.change_screen(CurrentScreen::Task);
+                                    task_manager.clear_inputs();
+                                }
+                                KeyCode::Char(c) => task_manager.input_task_string.push(c),
+                                KeyCode::Backspace => {
+                                    if !task_manager.input_task_string.is_empty() {
+                                        task_manager.input_task_string.pop().unwrap();
+                                    }
+                                }
+                                KeyCode::Up | KeyCode::Down => app.toggle_task_priority(),
+                                KeyCode::Right | KeyCode::Left => app.toggle_priority_status(),
+                                KeyCode::Enter => {
+                                    if !task_manager.input_task_string.is_empty() {
+                                        task_manager.save_edited_task(
+                                            task_with_state.state.selected().unwrap(),
+                                        );
+                                        task_with_state = StatefulList::new(&task_manager.tasks);
+                                    }
+                                    app.change_screen(CurrentScreen::Main)
+                                }
+                                _ => (),
+                            },
+                            CurrentlyEditing::Priority => match key.code {
+                                KeyCode::Esc => {
+                                    app.change_screen(CurrentScreen::Task);
+                                    task_manager.clear_inputs();
+                                }
+                                KeyCode::Up | KeyCode::Down => app.toggle_task_priority(),
+                                KeyCode::Right | KeyCode::Left => app.toggle_priority_status(),
+                                KeyCode::Tab => task_manager.switch_priority_value(),
+                                KeyCode::Enter => {
+                                    if !task_manager.input_task_string.is_empty() {
+                                        task_manager.save_edited_task(
+                                            task_with_state.state.selected().unwrap(),
+                                        );
+                                        task_with_state = StatefulList::new(&task_manager.tasks);
+                                    }
+                                    app.change_screen(CurrentScreen::Main)
+                                }
+                                _ => (),
+                            },
+                            CurrentlyEditing::Status => match key.code {
+                                KeyCode::Esc => {
+                                    app.change_screen(CurrentScreen::Task);
+                                    task_manager.clear_inputs();
+                                }
+                                KeyCode::Up | KeyCode::Down => app.toggle_task_priority(),
+                                KeyCode::Right | KeyCode::Left => app.toggle_priority_status(),
+                                KeyCode::Tab => task_manager.switch_status_value(),
+                                KeyCode::Enter => {
+                                    if !task_manager.input_task_string.is_empty() {
+                                        task_manager.save_edited_task(
+                                            task_with_state.state.selected().unwrap(),
+                                        );
+                                        task_with_state = StatefulList::new(&task_manager.tasks);
+                                    }
+                                    app.change_screen(CurrentScreen::Main)
+                                }
+                                _ => (),
+                            },
+                        };
+                    }
                     CurrentScreen::Exiting => match key.code {
                         KeyCode::Char('y') => break,
+                        KeyCode::Char('n') => {
+                            app.change_screen(CurrentScreen::Main);
+                            continue;
+                        }
+                        _ => (),
+                    },
+                    CurrentScreen::Delete => match key.code {
+                        KeyCode::Char('y') => {
+                            let idx = task_with_state.state.selected().unwrap();
+                            task_manager.delete_task(idx);
+                            task_with_state = StatefulList::new(&task_manager.tasks);
+                            app.change_screen(CurrentScreen::Main)
+                        }
                         KeyCode::Char('n') => {
                             app.change_screen(CurrentScreen::Main);
                             continue;

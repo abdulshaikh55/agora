@@ -56,7 +56,7 @@ impl TaskManager {
         }
     }
 
-    pub fn save_instance_task(&mut self) {
+    pub fn save_new_task(&mut self) {
         self.tasks.push(Task {
             task: self.input_task_string.clone(),
             priority: self.input_priority.clone(),
@@ -66,6 +66,28 @@ impl TaskManager {
         self.input_task_string = String::new();
         self.input_priority = Priority::Important;
         self.input_status = Status::NotStarted;
+    }
+
+    pub fn save_edited_task(&mut self, idx: usize) {
+        self.tasks[idx] = Task {
+            task: self.input_task_string.clone(),
+            priority: self.input_priority.clone(),
+            status: self.input_status.clone(),
+        };
+
+        self.input_task_string = String::new();
+        self.input_priority = Priority::Important;
+        self.input_status = Status::NotStarted;
+    }
+
+    pub fn clear_inputs(&mut self) {
+        self.input_task_string = String::new();
+        self.input_priority = Priority::Important;
+        self.input_status = Status::NotStarted;
+    }
+
+    pub fn delete_task(&mut self, idx: usize) {
+        self.tasks.remove(idx);
     }
 }
 
@@ -143,6 +165,16 @@ impl StatefulList {
     pub fn extract_specific_task_string_only(&mut self, idx: usize) -> String {
         let task = self.tasks.get(idx).unwrap();
         task.task.clone()
+    }
+
+    pub fn extract_specific_priority_only(&mut self, idx: usize) -> Priority {
+        let task = self.tasks.get(idx).unwrap();
+        task.priority.clone()
+    }
+
+    pub fn extract_specific_status_only(&mut self, idx: usize) -> Status {
+        let task = self.tasks.get(idx).unwrap();
+        task.status.clone()
     }
 
     // fn unchange_selected_string(&mut self) {}
