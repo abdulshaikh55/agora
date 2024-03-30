@@ -9,12 +9,12 @@ pub enum CurrentlyEditing {
 
 /// This enum is used to jump between screens.
 pub enum CurrentScreen {
-    New,     // screen to add a new task
-    Main,    // screen to display all the tasks
-    Delete,  // screen to display asking if you really wan to delete a task
-    Task,    // screen to display a specific task
-    Editing, // screen to modify a specific task
-    Exiting, // screen to confirm exit
+    New,
+    Main,
+    Delete,
+    Task,
+    Editing,
+    Exiting,
 }
 
 pub struct App {

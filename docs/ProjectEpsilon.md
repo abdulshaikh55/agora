@@ -13,6 +13,3 @@
 This Command Line based application is complete. Now I will take some time to study the [Ratatui](https://www.ratatui.rs/) crate and learn how to implement it in this project.
 
 Thank you!
-<br><br><br>
-
-<a href="https://www.linkedin.com/in/abdulshaikh55"><img src ="./images/linkedin.png" alt = "LinkedIn" height="30px" width="30px"></a>

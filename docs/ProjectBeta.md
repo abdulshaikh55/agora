@@ -18,6 +18,3 @@ The changes to be made in the next stages are listed below:
 * File Input-Output
 * Error Handling
 * ...
-<br><br><br>
-
-<a href="https://www.linkedin.com/in/abdulshaikh55"><img src ="./images/linkedin.png" alt = "LinkedIn" height="30px" width="30px"></a>

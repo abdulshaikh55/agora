@@ -25,7 +25,7 @@ pub fn ui(
 
     let footer_chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(30), Constraint::Percentage(70)])
+        .constraints([Constraint::Percentage(25), Constraint::Percentage(75)])
         .split(layout[2]);
 
     render_footer(frame, footer_chunks, app);
@@ -258,9 +258,14 @@ fn create_main_layout(size: Rect) -> Rc<[Rect]> {
 
 /// renders a block with the title **Task Manager**
 fn render_title(frame: &mut Frame, area: Rect) {
+    let bottom_border_set = symbols::border::Set {
+        bottom_right: symbols::line::NORMAL.vertical_left,
+        bottom_left: symbols::line::NORMAL.vertical_right,
+        ..symbols::border::ROUNDED
+    };
     let title_block = Block::default()
         .borders(Borders::ALL)
-        .border_set(symbols::border::ROUNDED);
+        .border_set(bottom_border_set);
     let title_style = Style::default().fg(Color::Green).bold();
     let title = Paragraph::new(Text::styled("Task Manager", title_style))
         .block(title_block)
@@ -292,6 +297,11 @@ fn render_list(frame: &mut Frame, area: Rect, list_with_state: &mut StatefulList
 /// 1. **navigation**: indicates which block we're on
 /// 2. **controls**: indicates how to maneuver through that block
 fn render_footer(frame: &mut Frame, area: Rc<[Rect]>, app: &App) {
+    let top_left_border_set = symbols::border::Set {
+        top_left: symbols::line::NORMAL.vertical_right,
+        ..symbols::border::ROUNDED
+    };
+
     let navigation = match app.current_screen {
         CurrentScreen::Main => Line::styled(" Main Menu", Style::default().fg(Color::Gray)),
         CurrentScreen::Editing => Line::styled(" Editing", Style::default().fg(Color::Green)),
@@ -300,7 +310,18 @@ fn render_footer(frame: &mut Frame, area: Rc<[Rect]>, app: &App) {
         CurrentScreen::New => Line::styled(" New Task", Style::default().fg(Color::Blue)),
         CurrentScreen::Delete => Line::styled(" Delete", Style::default().fg(Color::Red)),
     };
-    let navigation = Paragraph::new(navigation).block(Block::default().borders(Borders::ALL));
+    let navigation = Paragraph::new(navigation).block(
+        Block::default()
+            .borders(Borders::LEFT | Borders::TOP | Borders::BOTTOM)
+            .border_set(top_left_border_set),
+    );
+
+    let top_right_border_set = symbols::border::Set {
+        top_left: symbols::line::NORMAL.horizontal_down,
+        bottom_left: symbols::line::NORMAL.horizontal_up,
+        top_right: symbols::line::NORMAL.vertical_left,
+        ..symbols::border::ROUNDED
+    };
     frame.render_widget(navigation, area[0]);
 
     let control_panel = match app.current_screen {
@@ -309,11 +330,11 @@ fn render_footer(frame: &mut Frame, area: Rc<[Rect]>, app: &App) {
             Style::default().fg(Color::Green),
         ),
         CurrentScreen::Editing => Line::styled(
-            " [⬆] / [⬇] to move, [➡] to select [⬅] to unselect",
+            " [⬆] / [⬇] to move, [Tab] to toggle values, [Enter] to confirm, [Esc] to go back",
             Style::default().fg(Color::Green),
         ),
         CurrentScreen::Task => Line::styled(
-            " [⬆] / [⬇] to move, [➡] to Edit [⬅] to Main Menu",
+            " [➡] to Edit [Esc] to go back",
             Style::default().fg(Color::Green),
         ),
         CurrentScreen::Exiting => Line::styled(
@@ -329,7 +350,11 @@ fn render_footer(frame: &mut Frame, area: Rc<[Rect]>, app: &App) {
             Style::default().fg(Color::Green),
         ),
     };
-    let control_panel = Paragraph::new(control_panel).block(Block::default().borders(Borders::ALL));
+    let control_panel = Paragraph::new(control_panel).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .border_set(top_right_border_set),
+    );
     frame.render_widget(control_panel, area[1]);
 }
 
@@ -501,55 +526,26 @@ mod ui_test {
 
     #[test]
     fn test_centered_rect() {
-        let rect = Rect {
-            x: 0,
-            y: 0,
-            width: 200,
-            height: 150,
-        };
-        let expected_rect = Rect {
-            x: 74,
-            y: 18,
-            width: 50,
-            height: 113,
-        };
+        let rect = Rect::new(0, 0, 200, 150);
+
+        let expected_rect = Rect::new(74, 18, 50, 113);
         let actual_rect = centered_rect(25, 75, rect);
         assert_eq!(actual_rect, expected_rect);
     }
 
     #[test]
     fn test_create_main_layout() {
-        let screen_size = Rect {
-            x: 0,
-            y: 0,
-            width: 80,
-            height: 25,
-        };
+        let screen_size = Rect::new(0, 0, 80, 25);
 
         let layout: Rc<[Rect]> = create_main_layout(screen_size);
 
         let expected_sizes: Rc<[Rect]> = [
             // Title: 3 units of height (assuming full width)
-            Rect {
-                x: 0,
-                y: 0,
-                width: 80,
-                height: 3,
-            },
+            Rect::new(0, 0, 80, 3),
             // List: Min height of 2 (assuming full width)
-            Rect {
-                x: 0,
-                y: 3,
-                width: 80,
-                height: 19,
-            },
+            Rect::new(0, 3, 80, 19),
             // Footer: 3 units of height (assuming full width)
-            Rect {
-                x: 0,
-                y: 22,
-                width: 80,
-                height: 3,
-            },
+            Rect::new(0, 22, 80, 3),
         ]
         .into();
 

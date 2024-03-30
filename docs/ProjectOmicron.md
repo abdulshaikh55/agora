@@ -1,0 +1,6 @@
+- [x] Fix the image and video not rendering on markdowns
+- [x] write more tests
+- [x] complete CurrentScreen::Exit
+- [x] Collapse borders in layouts
+- [ ] Complete README
+- [x] Bring back Project Zeta

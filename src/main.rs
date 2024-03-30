@@ -76,7 +76,11 @@ fn main() -> std::io::Result<()> {
                                 task_with_state.next()
                             }
                         }
-                        KeyCode::Delete => app.change_screen(CurrentScreen::Delete),
+                        KeyCode::Delete => {
+                            if !task_with_state.tasks.is_empty() {
+                                app.change_screen(CurrentScreen::Delete)
+                            };
+                        }
                         _ => (),
                     },
                     CurrentScreen::New => match app.currently_editing {
@@ -129,7 +133,7 @@ fn main() -> std::io::Result<()> {
                         },
                     },
                     CurrentScreen::Task => match key.code {
-                        KeyCode::Left | KeyCode::Esc => app.change_screen(CurrentScreen::Main),
+                        KeyCode::Esc => app.change_screen(CurrentScreen::Main),
                         KeyCode::Right => app.change_screen(CurrentScreen::Editing),
                         _ => (),
                     },

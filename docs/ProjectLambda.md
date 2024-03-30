@@ -21,4 +21,4 @@
 
 This has been one of my best and joyous moments. For the past few weeks I was uncertain regarding how to navigate through the project. But now things have gotten clear. Hopefully this project will complete *with* that clarity and hopefully complete soon.
 
-💖 A.S.
+<video width="1080" controls><source src="resources/ProjectLambdaUpdate.mp4" type="video/mp4"></video>

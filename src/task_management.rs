@@ -1,14 +1,14 @@
 use ratatui::widgets::ListState;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum Status {
     NotStarted,
     Ongoing,
     Completed,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum Priority {
     Urgent,
     Important,
@@ -305,5 +305,65 @@ mod controls_tests {
             "ListState not unselected"
         );
         list_with_state.previous();
+    }
+
+    #[test]
+    fn test_switch_priority_value() {
+        let mut tm = TaskManager::new(Vec::new());
+
+        tm.input_priority = Priority::Important;
+
+        tm.switch_priority_value();
+        let mut expected_priority = Priority::Urgent;
+
+        assert_eq!(
+            expected_priority, tm.input_priority,
+            "could not switch from Important to Urgent"
+        );
+
+        tm.switch_priority_value();
+        expected_priority = Priority::Normal;
+
+        assert_eq!(
+            expected_priority, tm.input_priority,
+            "could not switch from Urgent to Normal"
+        );
+
+        tm.switch_priority_value();
+        expected_priority = Priority::Important;
+        assert_eq!(
+            expected_priority, tm.input_priority,
+            "could not switch from Normal to Important"
+        );
+    }
+
+    #[test]
+    fn test_switch_status_value() {
+        let mut tm = TaskManager::new(Vec::new());
+
+        tm.input_status = Status::NotStarted;
+
+        tm.switch_status_value();
+        let mut expected_status = Status::Ongoing;
+
+        assert_eq!(
+            expected_status, tm.input_status,
+            "could not switch from NotStarted to Ongoing"
+        );
+
+        tm.switch_status_value();
+        expected_status = Status::Completed;
+
+        assert_eq!(
+            expected_status, tm.input_status,
+            "could not switch from Ongoing to Completed"
+        );
+
+        tm.switch_status_value();
+        expected_status = Status::NotStarted;
+        assert_eq!(
+            expected_status, tm.input_status,
+            "could not switch from Completed to NotStarted"
+        );
     }
 }

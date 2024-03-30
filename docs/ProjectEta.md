@@ -1,6 +1,6 @@
 # Task Manager TUI
 
-We have started learning and applying the Ratatui to turn our cli to tui. 
+I have started learning and applying the Ratatui to turn our cli to tui. 
 Ratatui applications are generally divided into modules that help us organize our application into different parts
 The following will be the modules in our applications
 1. main.rs
@@ -11,13 +11,13 @@ The following will be the modules in our applications
 
 ## What functions have been added?
 Introduction page:
-<img src="./images/task_manager_introduction.png">
+<img src="resources/task_manager_introduction.png">
 
 Main screen:
-<img src="./images/task_manager_main_screen.png">  
+<img src="resources/task_manager_main_screen.png">  
 
 Select tasks:
-<img src="./images/select_tasks.png">
+<img src="resources/select_tasks.png">
 
 ui and app will be our frontend whereas tasks and task_manager will be our backend.
 

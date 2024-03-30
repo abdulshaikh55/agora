@@ -18,3 +18,6 @@ This journey has been a tremendous learning experience for me, not only in terms
 This app has the potential to be even better with your feedback and suggestions. I encourage you to use it and let me know what functionalities you would like to see added, or even contribute to the project yourself.
 
 I am deeply grateful for this journey. 💖
+
+
+<video width="1080" controls><source src="resources/ProjectXiUpdate.mp4" type="video/mp4"></video>

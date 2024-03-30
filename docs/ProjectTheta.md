@@ -1,4 +1,4 @@
-# Completed
+## Completed
 1. Display the tasks from the json file on the main screen. 
 2. Add the footer to display 
    1. where the user is
@@ -6,14 +6,14 @@
 3. Update the introduction function
 4. Add an exit popup
 
-# Ongoing
+## Ongoing
 1. [] try to figure out what to do with app.rs and task.rs
 2. Add test to modules [testing will go on until the project is finished]
 3. When user selects one of the tasks, display it on a popup block.
 4. display how to navigate through various tabs.
 
 
-# NotStarted
+## NotStarted
 1. Mini features
    1. If task is `NotStarted`, display it in blue.
    2. If task is `Ongoing`, display it in yellow.
@@ -22,5 +22,5 @@
 
 
 
-# So far
-![Task Manager So Far](./resources/task_manager_process.mp4)
+## So far
+<video width="1080" controls><source src="resources/task_manager_process.mp4" type="video/mp4"></video>
