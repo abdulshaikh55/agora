@@ -4,8 +4,6 @@ Welcome to the documentation for Task Manager! This project is divided into stag
 
 I have organized the documentation to make it easy for you to navigate and find the information you need. Below, you will find an index of the available documentation for each stage. Simply click on the stage you are interested in to access the corresponding documentation.
 
-In order to 
-
 ## Index
 
 1. [Project Alpha](ProjectAlpha.md)
@@ -23,4 +21,3 @@ In order to
 13. [Project Omicron](ProjectOmicron.md)
 
 I hope you find this documentation helpful and informative. Happy exploring!
-

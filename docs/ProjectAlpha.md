@@ -5,11 +5,11 @@ I had been planning to write this project for three weeks prior to that, but I f
 
 Now, let's discuss the project itself.  
 
-This document will cover the development of the code, which will be divided into stages named after Greek letters. The first variation is named Project Alpha.
-
 Project Alpha includes the basic functionalities of a task manager, such as adding, deleting, and viewing tasks. 
 
-Here are some characteristics of these functionalities:  
+In this stage, we focus on analyzing the functionalities of the program. We do that by writing a CLI instead of a TUI to understand what the program needs to do.
+
+Here are some functionalities:  
 * You can add tasks one by one.
 * You can delete the latest task, a specific task, or all tasks.
 * You can display all tasks in the terminal.

@@ -11,7 +11,7 @@
 
 5. User Interaction: Better terminal output so that user can clearly understand what is happening.
    
-6. Error Handling: Errors are handled better...
+6. Error Handling: Errors are handled better.
 
 This stage has some significant changes from the previous stages, but the code is still incomplete. The updates hopefully to be made in the next stages are:
 * Enhanced data structures

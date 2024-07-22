@@ -16,4 +16,4 @@ Expected updates:
 
 
 ## Today I learned
-Today I learned about a Text-based User Interface called [ratatui](https://ratatui.rs/index.html) (I know). I even wrote a hello world program on it, as is tradition. I will be learning more about ratatui and TUI to see which one is better to implement into this code. Hopefully, our program gets completed before we run out of Greek letters.
+Today I learned about a Text-based User Interface called [ratatui](https://ratatui.rs/index.html). I even wrote a hello world program on it, as is tradition. I will be learning more about ratatui and TUI to see which one is better to implement into this code. Hopefully, our program gets completed before we run out of Greek letters.

@@ -8,8 +8,6 @@
 
 3. Removing description: The task should be summed up in the title.
 
-4. Cleaner code: I am reading clean code by Robert C. Martin, and trying to implement some of the practices and teachings from it.
-
 This Command Line based application is complete. Now I will take some time to study the [Ratatui](https://www.ratatui.rs/) crate and learn how to implement it in this project.
 
 Thank you!

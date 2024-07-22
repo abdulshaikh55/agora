@@ -1,6 +1,10 @@
 # Task Manager TUI
 
 I have started learning and applying the Ratatui to turn our cli to tui. 
+
+Because I wrote the CLI first, I now have a better understanding of what are the requirements of a task manager. Now we'll have to synthesize the requirements with the UI.
+
+I have started the redevelopment of the project into a TUI using ratatui.
 Ratatui applications are generally divided into modules that help us organize our application into different parts
 The following will be the modules in our applications
 1. main.rs

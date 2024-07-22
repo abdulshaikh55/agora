@@ -1,3 +1,5 @@
+I have decided to change the format of the documentation somewhat. I will be showing the changes I have made using an ordered list. This will help me keep track of what I have done and what I still need to do.
+
 ## Completed
 1. Display the tasks from the json file on the main screen. 
 2. Add the footer to display 
