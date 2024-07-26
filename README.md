@@ -1,19 +1,10 @@
 # Task Manager
-![Static Badge](https://img.shields.io/badge/rust-lang?style=plastic&logo=rust)
+![Rust](https://img.shields.io/badge/rust-lang?style=plastic&logo=rust)
 ![Crossterm](https://img.shields.io/crates/v/crossterm?label=crossterm&logo=rust&style=plastic)
 ![Ratatui](https://img.shields.io/crates/v/ratatui?label=ratatui&logo=rust&style=plastic)
 
 ## Description
-This command line application, Task Manager, is built with Rust and features a Text-Based User Interface (TUI). It empowers users to efficiently manage their tasks in a fun and interactive way.
-
-This project incorporates several Rust basics such as:
-* including structs
-* enums
-* modules
-* file I/O
-* error handling
-* user input processing
-* ...    
+Agora is a command line application built with Rust and features a Text-Based User Interface (TUI). It empowers users to efficiently manage their tasks in a fun and interactive way.
 
 With Task Manager, you can stay organized and productive.
 
