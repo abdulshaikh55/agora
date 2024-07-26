@@ -1,4 +1,4 @@
-# Task Manager
+# Agora
 ![Rust](https://img.shields.io/badge/rust-lang?style=plastic&logo=rust)
 ![Crossterm](https://img.shields.io/crates/v/crossterm?label=crossterm&logo=rust&style=plastic)
 ![Ratatui](https://img.shields.io/crates/v/ratatui?label=ratatui&logo=rust&style=plastic)
@@ -13,8 +13,7 @@ With Task Manager, you can stay organized and productive.
 2. Save the task locally: you can come back to your whenever, because it is saved in your computer.
 3. Interactive TUI: Enjoy a visually appealing and user-friendly interface that makes task management a breeze.
 4. Status Tracking: Keep track of the status of your tasks with the built-in status enum. Whether it's "NotStarted," "Ongoing," or "Completed," Task Manager has got you covered.
-5. Aesthetically Pleasing: Task Manager combines formal and funny elements to create an engaging experience. Get things done with a smile on your face!
-6. Faster than GUI: Since the app runs on terminal directly, it resources than a GUI.
+5. Faster than GUI: Since the app runs on terminal directly, it resources than a GUI.
 
 ## Demonstration
 
@@ -25,14 +24,14 @@ With Task Manager, you can stay organized and productive.
 ## The process
 The process of developing the project is a two-parter.  
 In the first part, I developed a CLI Task Manager without a task-based user interface (see [Project Zeta](docs/ProjectZeta.md)).
-This was done to understand the user requirements for the Task Manager TUI, such as:
+This was done to understand the user requirements for the Agora TUI, such as:
 * features of a task manager
 * parameters of data structures
-* necessary vs unnecessary data structures
+* necessary and unnecessary data structures
 * user experience
 * freedom of choice
 
-Another reason was to understand the system requirements of the TUi, such as: 
+Another reason was to understand the system requirements of the TUI, such as: 
 * determining the main layout
 * handling file I/O
 * managing errors
@@ -40,11 +39,11 @@ Another reason was to understand the system requirements of the TUi, such as:
 * defining the necessary structs and enums
 * establishing the application flow  
 
-The development of the simple CLI was instrumental in determining the essential components of the TUI, as well as those that were not necessary. Simultaneously, it laid the foundation for the entire project, including data structures, data flow, algorithms, and more.
+The development of the simple CLI was instrumental in determining the essential components of Agora, as well as those that were not necessary. Simultaneously, it laid the foundation for the entire project, including data structures, data flow, algorithms, and more.
 
 The documentation for the CLI app are in the initial branch ([master/docs](https://github.com/abdulshaikh55/task_manager/tree/master/docs)).
 
-The second part is the TUI. In this section, I built the User Interface for the task manager in the intial stages. As the 'blueprint' of what I wanted the task manager to do and not do, I could focus on the TUI and its backend. I had to read [examples](https://github.com/ratatui-org/ratatui/tree/main/examples) of codes and documentations on [ratatui.rs](ratatui.rs) to implement the corresponding functionality. Since, the documentations of ratatui crate was not as developed at the time of making this project, I had to rely on reading code written by others. This made me learn a lot about open source, software engineering and programming at a faster rate.
+The second part is the TUI. In this section, I built the User Interface Agora in the intial stages. As the 'blueprint' of what I wanted the task manager to do and not do, I could focus on the TUI and its backend. I had to read [examples](https://github.com/ratatui-org/ratatui/tree/main/examples) of codes and documentations on [ratatui.rs](https://ratatui.rs/) to implement the corresponding functionality. When I wanted to implement a feature I did not understand by reading the official documentation, I tried out code written by other programmers. This made me learn a lot about open source, software engineering and programming at a faster rate.
 
 # Controls
 We'll learn how to navigate through the app.
